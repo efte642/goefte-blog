@@ -12,7 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- Security settings ---
 SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-local-secret")
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,goefte-blog.onrender.com").split(",")
+
 
 # --- Installed apps ---
 INSTALLED_APPS = [
