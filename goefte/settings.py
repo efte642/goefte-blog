@@ -3,7 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
 # --- Base directory ---
@@ -14,9 +14,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-local-secret")
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
-# --- Applications ---
+# --- Installed apps ---
 INSTALLED_APPS = [
-    # Django default apps
+    # Django defaults
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -24,20 +24,20 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third-party apps
+    # Third-party
     "ckeditor",
     "ckeditor_uploader",
-    "storages",  # Optional: for S3 or other cloud storage
+    "storages",  # Optional: S3 or cloud storage
+    "taggit",
 
     # Local apps
-    "core.apps.CoreConfig",
+    "core_app.apps.CoreAppConfig",  # ✅ correct path
 ]
 
 # --- Middleware ---
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # WhiteNoise: serves static files in production
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # static files in production
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -53,7 +53,7 @@ ROOT_URLCONF = "goefte.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # your custom templates folder
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -87,19 +87,17 @@ TIME_ZONE = "Asia/Dhaka"
 USE_I18N = True
 USE_TZ = True
 
-# --- Static files (CSS, JS, images) ---
+# --- Static files ---
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
-# WhiteNoise: compress and serve static files efficiently
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# --- Media files (user uploads) ---
+# --- Media files ---
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# --- CKEditor configuration ---
+# --- CKEditor ---
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_CONFIGS = {
     "default": {
@@ -109,5 +107,13 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# --- Default auto field ---
+# --- Default primary key field type ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Security for production ---
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    X_FRAME_OPTIONS = 'DENY'
